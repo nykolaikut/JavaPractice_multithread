@@ -4,23 +4,21 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
 public class RandomThread implements Runnable {
-
     private CountDownLatch latch;
-    private Q q;
-    private String name;
+    private Container container;
+    private Integer numberOfThread;
     private Thread t ;
     private int randomNumber;
 
     Random random = new Random();
 
-    public RandomThread(String name, CountDownLatch latch, Q q)
+    public RandomThread(Integer numberOfThread, CountDownLatch latch, Container container)
     {
-        this.name = name;
+        this.numberOfThread = numberOfThread;
         this.latch = latch;
-        this.q = q;
-        t = new Thread(this, name);
+        this.container = container;
+        t = new Thread(this);
         t.start();
-
     }
 
     @Override
@@ -28,14 +26,13 @@ public class RandomThread implements Runnable {
     {
         try
         {
+            latch.await();
 
-            latch.await();         //The thread keeps waiting till it is informed
-
-            while(q.getMsg() == ""){
+            while(container.getIsProcessing()) {
                 while(true){
                     randomNumber = random.nextInt(Main.RANDOM_MAX_VALUE + 1);
                     if (randomNumber > 0) {
-                        q.getHm().put(Integer.valueOf(name), randomNumber);
+                        container.put(randomNumber);
                         break;
                     }
                 }

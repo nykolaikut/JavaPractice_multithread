@@ -5,61 +5,33 @@ import java.util.concurrent.CountDownLatch;
 
 public class SumThread implements Runnable {
     private CountDownLatch latch;
-    private Q q;
-    private String name;
+    private Container container;
+    private Integer numberOfThread;
     private Thread t ;
     private int randomNumber;
 
     Random random = new Random();
 
-    public SumThread(String name, CountDownLatch latch, Q q)
+    public SumThread(Integer numberOfThread, CountDownLatch latch, Container container)
     {
-        this.name = name;
         this.latch = latch;
-        this.q = q;
-        t = new Thread(this, name);
+        this.container = container;
+        this.numberOfThread = numberOfThread;
+        t = new Thread(this);
         t.start();
     }
 
     @Override
     public void run()
     {
-        try
-        {
-            latch.await(); //The thread keeps waiting till it is informed
+        try {
+            latch.await();
 
- //           Thread.sleep(10);
-
-            int sumOfThread;
-            int sumAll;
-            int rndValue;
-
-            while(q.getMsg() == ""){
-                while(true){
-                    randomNumber = random.nextInt( Main.NUM_RANDOM_THREADS);
-                    if (randomNumber > 0) {
-                        if (q.getSum().get(Integer.valueOf(name)) == null) {
-                            sumOfThread = 0;
-                        } else {
-                            sumOfThread = q.getSum().get(Integer.valueOf(name));
-                        }
-
-                        if (q.getHm().get(randomNumber) == null ) {
-                            rndValue = 0;
-                        } else {
-                            rndValue = q.getHm().get(randomNumber);
-                        }
-
-                        sumAll = sumOfThread + rndValue;
-                        q.getSum().put(Integer.valueOf(name), sumAll);
-                        break;
-                    }
+            while (container.getIsProcessing()) {
+                synchronized (container) {
+                    container.putSum(numberOfThread);
                 }
-                if (sumAll >= Main.WINNING_MIN_SUM) {
-                    q.setMsg("Result: Thread sum" + name + " have won. The sum is " + sumAll);
-                    break;
-                }
-                Thread.sleep(100);
+                Thread.sleep(50);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
