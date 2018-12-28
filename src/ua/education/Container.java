@@ -11,7 +11,7 @@ public class Container {
 
     public Container(){
         this.sumMap = new HashMap<Integer,Integer>();
-        this.queueRandom = new LinkedBlockingQueue<Integer>(500);
+        this.queueRandom = new LinkedBlockingQueue<Integer>(300);
         this.isProcessing = true;
 
     }
@@ -36,19 +36,22 @@ public class Container {
         return queueRandom;
     }
 
-    public void putSum (int numberOfThread){
-        int sumThread = (sumMap.get(numberOfThread)== null) ? 0 : sumMap.get(numberOfThread);
-        int randomNumber = 0;
+    public synchronized void putSum (int numberOfThread) {
 
-        try {
-            randomNumber = queueRandom.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            int sumThread = (sumMap.get(numberOfThread) == null) ? 0 : sumMap.get(numberOfThread);
+            int randomNumber = 0;
 
-        int result = sumThread + randomNumber;
-        sumMap.put(numberOfThread,sumThread + randomNumber);
-        if (result >= Main.WINNING_MIN_SUM) interruptProcessing();
+            try {
+                if (isProcessing) randomNumber = queueRandom.take();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            int result = sumThread + randomNumber;
+
+            if (isProcessing) sumMap.put(numberOfThread, sumThread + randomNumber);
+
+            if (result >= Main.WINNING_MIN_SUM) interruptProcessing();
     }
 
     public HashMap<Integer, Integer> getSumMap() {

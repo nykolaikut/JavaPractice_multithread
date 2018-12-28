@@ -28,13 +28,11 @@ public class SumThread implements Runnable {
             latch.await();
 
             while (container.getIsProcessing()) {
-                synchronized (container) {
-                    container.putSum(numberOfThread);
-                }
-                Thread.sleep(50);
+                container.putSum(numberOfThread);
+                Thread.sleep(30);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
+     }
 }
