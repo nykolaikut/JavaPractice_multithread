@@ -38,7 +38,6 @@ public class Container {
 
     public synchronized void putSum (int numberOfThread) {
 
-            int sumThread = (sumMap.get(numberOfThread) == null) ? 0 : sumMap.get(numberOfThread);
             int randomNumber = 0;
 
             try {
@@ -47,10 +46,10 @@ public class Container {
                 e.printStackTrace();
             }
 
+            int sumThread = (sumMap.get(numberOfThread) == null) ? 0 : sumMap.get(numberOfThread);
             int result = sumThread + randomNumber;
 
             if (isProcessing) sumMap.put(numberOfThread, sumThread + randomNumber);
-
             if (result >= Main.WINNING_MIN_SUM) interruptProcessing();
     }
 

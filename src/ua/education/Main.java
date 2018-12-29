@@ -9,7 +9,7 @@ public class Main {
     public final static int NUMBER_RANDOM_THREADS = 7;
     public final static int WINNING_MIN_SUM = 100;
     public final static int RANDOM_MAX_VALUE = 5;
-    private final static int NUMBER_SUM_THREADS = 3;
+    private final static int NUMBER_SUM_THREADS = 2;
 
 
     public static void main(String[] args) {
