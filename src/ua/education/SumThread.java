@@ -27,8 +27,19 @@ public class SumThread implements Runnable {
         try {
             latch.await();
 
+            int result;
+
             while (container.getIsProcessing()) {
-                container.putSum(numberOfThread);
+
+                    result = container.getSum(numberOfThread) + container.getQueueRandom().take();
+
+                    if (container.getIsProcessing()) container.putSum(numberOfThread, result);
+
+                    if (result >= Main.WINNING_MIN_SUM) container.interruptProcessing();
+
+                    if(!container.getIsProcessing() & container.getQueueRandom().size() == 0)
+                        container.put(0);
+
                 Thread.sleep(30);
             }
         } catch (InterruptedException e) {

@@ -1,13 +1,15 @@
 package ua.education;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Container {
 
-    private HashMap<Integer,Integer> sumMap;
+    private Map<Integer,Integer> sumMap;
     private LinkedBlockingQueue<Integer> queueRandom;
-    private boolean isProcessing;
+    private volatile boolean isProcessing;
 
     public Container(){
         this.sumMap = new HashMap<Integer,Integer>();
@@ -36,24 +38,15 @@ public class Container {
         return queueRandom;
     }
 
-    public synchronized void putSum (int numberOfThread) {
-
-            int randomNumber = 0;
-
-            try {
-                if (isProcessing) randomNumber = queueRandom.take();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            int sumThread = (sumMap.get(numberOfThread) == null) ? 0 : sumMap.get(numberOfThread);
-            int result = sumThread + randomNumber;
-
-            if (isProcessing) sumMap.put(numberOfThread, sumThread + randomNumber);
-            if (result >= Main.WINNING_MIN_SUM) interruptProcessing();
+    public int getSum (int numberOfThread) {
+        return sumMap.getOrDefault(numberOfThread,0);
     }
 
-    public HashMap<Integer, Integer> getSumMap() {
+    public void putSum (int numberOfThread, int sum) {
+        sumMap.put(numberOfThread, sum);
+    }
+
+    public Map<Integer, Integer> getSumMap() {
         return sumMap;
     }
 }

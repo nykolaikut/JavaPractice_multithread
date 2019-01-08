@@ -28,14 +28,10 @@ public class RandomThread implements Runnable {
         {
             latch.await();
 
-            while(container.getIsProcessing()) {
-                while(true){
-                    randomNumber = random.nextInt(Main.RANDOM_MAX_VALUE + 1);
-                    if (randomNumber > 0) {
-                        container.put(randomNumber);
-                        break;
-                    }
-                }
+            while (container.getIsProcessing()) {
+
+                container.put(random.nextInt(Main.RANDOM_MAX_VALUE ) + 1);
+
                 Thread.sleep(100);
             }
         } catch (InterruptedException e) {
